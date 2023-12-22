@@ -1,7 +1,6 @@
-const game = {
-  currentPlayer: "",
-  board: ["", "", "", "", "", "", "", "", ""],
-  winCombinations: [
+function boardFactory() {
+  const cells = ["", "", "", "", "", "", "", "", ""];
+  const winCombinations = [
     [0, 1, 2],
     [3, 4, 5],
     [6, 7, 8],
@@ -10,75 +9,105 @@ const game = {
     [2, 5, 8],
     [0, 4, 8],
     [2, 4, 6],
-  ],
-  gameMessages: {
+  ];
+  const isFull = () => {
+    return cells.every((cell) => cell !== "");
+  };
+
+  return {
+    cells,
+    winCombinations,
+    isFull,
+  };
+}
+
+function playerFactory(symbol) {
+  const switchPlayer = () => {
+    symbol = symbol === "X" ? "O" : "X";
+  };
+  const getSymbol = () => symbol;
+
+  return {
+    getSymbol,
+    switchPlayer,
+  };
+}
+
+function gameFactory(playerObj, boardObj) {
+  currentPlayer = playerObj.getSymbol();
+  const gameMessages = {
     win: (winner) => {
-      console.log(`${winner} wins.`); //TEST
+      console.log(`${winner} wins.`);
     },
     tie: () => {
-      console.log("Tie"); //TEST
+      console.log("Tie.");
     },
     selectSymbol: () => {
-      console.log("Select a symbol."); //TEST
+      console.log("Select a symbol.");
     },
     selectAnotherCell: () => {
-      console.log("Select another cell."); //TEST
+      console.log("Select another cell.");
     },
-  },
-  play: function (i) {
-    if (!this.currentPlayer) {
-      this.gameMessages.selectSymbol();
-      return
-    }
+  };
 
-    if (this.isValidMove(i)) {
-      this.makeMove(i);
-
-      if (this.isWinner()) {
-        this.gameMessages.win(this.currentPlayer);
-        return;
-      }
-
-      if (this.isBoardFull()) {
-        this.gameMessages.tie();
-        return;
-      }
-
-      this.switchPlayer();
+  const play = (i) => {
+    if (!currentPlayer) {
+      gameMessages.selectSymbol();
       return;
     }
-    this.gameMessages.selectAnotherCell();
-  },
-  makeMove: function (i) {
-    this.board[i] = this.currentPlayer;
+
+    if (isValidMove(i)) {
+      makeMove(i);
+
+      if (isWinner()) {
+        gameMessages.win(currentPlayer);
+        return;
+      }
+
+      if (boardObj.isFull()) {
+        gameMessages.tie();
+        return;
+      }
+
+      playerObj.switchPlayer();
+      currentPlayer = playerObj.getSymbol();
+      return;
+    }
+
+    gameMessages.selectAnotherCell();
+    return;
+  };
+
+  const makeMove = (i) => {
+    boardObj.cells[i] = currentPlayer;
     console.log(`
-    ${this.board[0]} | ${this.board[1]} | ${this.board[2]}
+    ${boardObj.cells[0]} | ${boardObj.cells[1]} | ${boardObj.cells[2]}
     ----------- 
-    ${this.board[3]} | ${this.board[4]} | ${this.board[5]}
+    ${boardObj.cells[3]} | ${boardObj.cells[4]} | ${boardObj.cells[5]}
     ----------- 
-    ${this.board[6]} | ${this.board[7]} | ${this.board[8]}
+    ${boardObj.cells[6]} | ${boardObj.cells[7]} | ${boardObj.cells[8]}
    `); // TEST
-  },
-  isValidMove: function (i) {
-    return this.board[i] === "";
-  },
-  switchPlayer: function () {
-    this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
-  },
-  isWinner: function () {
-    for (const combination of this.winCombinations) {
+  };
+
+  const isValidMove = (i) => {
+    return boardObj.cells[i] === "";
+  };
+
+  const isWinner = () => {
+    for (const combination of boardObj.winCombinations) {
       const [a, b, c] = combination;
       if (
-        this.board[a] &&
-        this.board[a] === this.board[b] &&
-        this.board[a] === this.board[c]
+        boardObj.cells[a] &&
+        boardObj.cells[a] === boardObj.cells[b] &&
+        boardObj.cells[a] === boardObj.cells[c]
       ) {
         return true;
       }
+      return false;
     }
-    return false;
-  },
-  isBoardFull: function () {
-    return this.board.every((cell) => cell !== "");
-  },
-};
+  };
+
+  return {
+    play,
+  };
+}
