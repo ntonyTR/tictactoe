@@ -34,7 +34,7 @@ function playerFactory(symbol) {
 }
 
 function gameFactory(playerObj, boardObj) {
-  currentPlayer = playerObj.getSymbol();
+  let currentPlayer = playerObj.getSymbol();
   const gameMessages = {
     win: (winner) => {
       console.log(`${winner} wins.`);
@@ -103,8 +103,8 @@ function gameFactory(playerObj, boardObj) {
       ) {
         return true;
       }
-      return false;
     }
+    return false;
   };
 
   return {
