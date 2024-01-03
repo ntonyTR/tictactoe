@@ -22,19 +22,15 @@ function boardFactory() {
 }
 
 function playerFactory(symbol) {
-  const switchPlayer = () => {
-    symbol = symbol === "X" ? "O" : "X";
-  };
   const getSymbol = () => symbol;
 
   return {
     getSymbol,
-    switchPlayer,
   };
 }
 
-function gameFactory(playerObj, boardObj) {
-  let currentPlayer = playerObj.getSymbol();
+function gameFactory(player1, player2, boardObj) {
+  let currentPlayer = player2; // TODO: randomly select who starts
   const gameMessages = {
     win: (winner) => {
       console.log(`${winner} wins.`);
@@ -48,45 +44,6 @@ function gameFactory(playerObj, boardObj) {
     selectAnotherCell: () => {
       console.log("Select another cell.");
     },
-  };
-
-  const play = (i) => {
-    if (!currentPlayer) {
-      gameMessages.selectSymbol();
-      return;
-    }
-
-    if (isValidMove(i)) {
-      makeMove(i);
-
-      if (isWinner()) {
-        gameMessages.win(currentPlayer);
-        return;
-      }
-
-      if (boardObj.isFull()) {
-        gameMessages.tie();
-        return;
-      }
-
-      playerObj.switchPlayer();
-      currentPlayer = playerObj.getSymbol();
-      return;
-    }
-
-    gameMessages.selectAnotherCell();
-    return;
-  };
-
-  const makeMove = (i) => {
-    boardObj.cells[i] = currentPlayer;
-    console.log(`
-    ${boardObj.cells[0]} | ${boardObj.cells[1]} | ${boardObj.cells[2]}
-    ----------- 
-    ${boardObj.cells[3]} | ${boardObj.cells[4]} | ${boardObj.cells[5]}
-    ----------- 
-    ${boardObj.cells[6]} | ${boardObj.cells[7]} | ${boardObj.cells[8]}
-   `); // TEST
   };
 
   const isValidMove = (i) => {
@@ -105,6 +62,48 @@ function gameFactory(playerObj, boardObj) {
       }
     }
     return false;
+  };
+
+  const makeMove = (i) => {
+    boardObj.cells[i] = currentPlayer.getSymbol();
+    console.log(`
+    ${boardObj.cells[0]} | ${boardObj.cells[1]} | ${boardObj.cells[2]}
+    ----------- 
+    ${boardObj.cells[3]} | ${boardObj.cells[4]} | ${boardObj.cells[5]}
+    ----------- 
+    ${boardObj.cells[6]} | ${boardObj.cells[7]} | ${boardObj.cells[8]}
+   `); // TEST
+  };
+
+  const switchPlayer = () => {
+    currentPlayer = currentPlayer === player1 ? player2 : player1;
+  }
+
+  const play = (i) => {
+    if (!currentPlayer.getSymbol()) {
+      gameMessages.selectSymbol();
+      return;
+    }
+
+    if (isValidMove(i)) {
+      makeMove(i);
+
+      if (isWinner()) {
+        gameMessages.win(currentPlayer.getSymbol());
+        return;
+      }
+
+      if (boardObj.isFull()) {
+        gameMessages.tie();
+        return;
+      }
+
+      switchPlayer()
+      return;
+    }
+
+    gameMessages.selectAnotherCell();
+    return;
   };
 
   return {
