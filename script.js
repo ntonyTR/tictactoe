@@ -1,5 +1,5 @@
 const players = (function() {
-  const X = playerFactory("X");
+  const X = playerFactory("X"); //TODO: IMPLEMENT SCORE FOR X AND O WINNINGS
   const O = playerFactory("O");
 
   return {
@@ -11,8 +11,16 @@ const players = (function() {
 function playerFactory(symbol) {
   const getSymbol = () => symbol;
 
+  let score = 0;
+  const getScore = () => score;
+  function incrementScore() {
+    ++score;
+  }
+
   return {
     getSymbol,
+    getScore,
+    incrementScore,
   };
 }
 
@@ -53,8 +61,8 @@ const game = (function (player1, player2, boardObj) {
     win: (winner) => {
       console.log(`${winner} wins.`);
     },
-    tie: (score) => {
-      console.log(`Tie. Ties score: ${score}`);
+    tie: () => {
+      console.log(`Tie.`);
     },
     selectSymbol: () => {
       console.log("Select a symbol.");
@@ -62,6 +70,13 @@ const game = (function (player1, player2, boardObj) {
     selectAnotherCell: () => {
       console.log("Select another cell.");
     },
+    printScores: () => {
+      console.log(`
+      Player ${player1.getSymbol()} score: ${player1.getScore()}
+      Player ${player2.getSymbol()} score: ${player2.getScore()}
+      Ties: ${tiesScore}
+      `);
+    }
   };
 
   const isValidMove = (i) => {
@@ -107,14 +122,18 @@ const game = (function (player1, player2, boardObj) {
       makeMove(i);
 
       if (isWinner()) {
+        currentPlayer.incrementScore()
         gameMessages.win(currentPlayer.getSymbol());
+        gameMessages.printScores()
         boardObj.clearBoard()
+        switchPlayer();
         return;
       }
 
       if (boardObj.isFull()) {
         tiesScore++;
-        gameMessages.tie(tiesScore);
+        gameMessages.tie();
+        gameMessages.printScores()
         boardObj.clearBoard()
         return;
       }
