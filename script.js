@@ -1,5 +1,12 @@
-const playerX = playerFactory("X");
-const playerO = playerFactory("O");
+const players = (function() {
+  const X = playerFactory("X");
+  const O = playerFactory("O");
+
+  return {
+    X,
+    O
+  }
+})();
 
 function playerFactory(symbol) {
   const getSymbol = () => symbol;
@@ -112,4 +119,4 @@ const game = (function (player1, player2, boardObj) {
   return {
     play,
   };
-})(playerX, playerO, board);
+})(players.X, players.O, board);
