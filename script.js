@@ -31,22 +31,30 @@ const board = (function () {
   const isFull = () => {
     return cells.every((cell) => cell !== "");
   };
+  const clearBoard = () => {
+    cells.forEach((_, i, arr) => {
+      arr[i] = ""
+    })
+  };
 
   return {
     cells,
     winCombinations,
     isFull,
+    clearBoard,
   };
 })();
 
 const game = (function (player1, player2, boardObj) {
-  let currentPlayer = player1; // TODO: randomly select who starts
+  let currentPlayer = player1; // TODO: let the player select its symbol, the player will start  the first round
+  let tiesScore = 0;
+
   const gameMessages = {
     win: (winner) => {
       console.log(`${winner} wins.`);
     },
-    tie: () => {
-      console.log("Tie.");
+    tie: (score) => {
+      console.log(`Tie. Ties score: ${score}`);
     },
     selectSymbol: () => {
       console.log("Select a symbol.");
@@ -100,11 +108,14 @@ const game = (function (player1, player2, boardObj) {
 
       if (isWinner()) {
         gameMessages.win(currentPlayer.getSymbol());
+        boardObj.clearBoard()
         return;
       }
 
       if (boardObj.isFull()) {
-        gameMessages.tie();
+        tiesScore++;
+        gameMessages.tie(tiesScore);
+        boardObj.clearBoard()
         return;
       }
 
