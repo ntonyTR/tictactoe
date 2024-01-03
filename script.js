@@ -1,4 +1,15 @@
-function boardFactory() {
+const playerX = playerFactory("X");
+const playerO = playerFactory("O");
+
+function playerFactory(symbol) {
+  const getSymbol = () => symbol;
+
+  return {
+    getSymbol,
+  };
+}
+
+const board = (function () {
   const cells = ["", "", "", "", "", "", "", "", ""];
   const winCombinations = [
     [0, 1, 2],
@@ -19,18 +30,10 @@ function boardFactory() {
     winCombinations,
     isFull,
   };
-}
+})();
 
-function playerFactory(symbol) {
-  const getSymbol = () => symbol;
-
-  return {
-    getSymbol,
-  };
-}
-
-function gameFactory(player1, player2, boardObj) {
-  let currentPlayer = player2; // TODO: randomly select who starts
+const game = (function (player1, player2, boardObj) {
+  let currentPlayer = player1; // TODO: randomly select who starts
   const gameMessages = {
     win: (winner) => {
       console.log(`${winner} wins.`);
@@ -77,7 +80,7 @@ function gameFactory(player1, player2, boardObj) {
 
   const switchPlayer = () => {
     currentPlayer = currentPlayer === player1 ? player2 : player1;
-  }
+  };
 
   const play = (i) => {
     if (!currentPlayer.getSymbol()) {
@@ -98,7 +101,7 @@ function gameFactory(player1, player2, boardObj) {
         return;
       }
 
-      switchPlayer()
+      switchPlayer();
       return;
     }
 
@@ -109,4 +112,4 @@ function gameFactory(player1, player2, boardObj) {
   return {
     play,
   };
-}
+})(playerX, playerO, board);
