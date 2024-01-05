@@ -1,11 +1,53 @@
-const players = (function() {
-  const X = playerFactory("X"); //TODO: IMPLEMENT SCORE FOR X AND O WINNINGS
-  const O = playerFactory("O");
+const boardContainer = document.getElementById("board-container");
+
+boardContainer.addEventListener("click", (e) => {
+  if (e.target.tagName === "BUTTON") {
+    console.log(e.target.textContent);
+    let index = e.target.textContent;
+    ui.startModal.play(index);
+  }
+});
+
+const ui = (function () {
+const startModal = {
+    playerSelectorModal: document.getElementById("player-selector-modal"),
+    playerSelectorBtns: document.getElementById("symbol-buttons-container"),
+
+    players: {
+      p1: {},
+      p2: {},
+    },
+
+    currentGame: null,
+
+    assignPlayers: function (element, playersObject) {
+      let selectedSymbol = element.textContent;
+      playersObject.p1 = playerFactory(selectedSymbol);
+      playersObject.p2 = playerFactory(selectedSymbol === "X" ? "O" : "X");
+    },
+
+    startNewGame: function (players) {
+      return game(players.p1, players.p2, board);
+    },
+
+    symbolButtonClickHandler: (e) => {
+      if (e.target && e.target.tagName === "BUTTON") {
+        startModal.assignPlayers(e.target, startModal.players);
+        startModal.playerSelectorModal.classList.toggle("hide");
+        startModal.currentGame = startModal.startNewGame(startModal.players);
+      }
+    },
+
+    play: function (i) {
+      this.currentGame.play(i);
+    },
+  };
+
+  startModal.playerSelectorBtns.addEventListener("click", startModal.symbolButtonClickHandler);
 
   return {
-    X,
-    O
-  }
+    startModal,
+  };
 })();
 
 function playerFactory(symbol) {
@@ -41,8 +83,8 @@ const board = (function () {
   };
   const clearBoard = () => {
     cells.forEach((_, i, arr) => {
-      arr[i] = ""
-    })
+      arr[i] = "";
+    });
   };
 
   return {
@@ -53,8 +95,9 @@ const board = (function () {
   };
 })();
 
-const game = (function (player1, player2, boardObj) {
-  let currentPlayer = player1; // TODO: let the player select its symbol, the player will start  the first round
+const game = function (player1, player2, boardObj) {
+  // es un constructor
+  let currentPlayer = player1;
   let tiesScore = 0;
 
   const gameMessages = {
@@ -76,7 +119,7 @@ const game = (function (player1, player2, boardObj) {
       Player ${player2.getSymbol()} score: ${player2.getScore()}
       Ties: ${tiesScore}
       `);
-    }
+    },
   };
 
   const isValidMove = (i) => {
@@ -122,10 +165,10 @@ const game = (function (player1, player2, boardObj) {
       makeMove(i);
 
       if (isWinner()) {
-        currentPlayer.incrementScore()
+        currentPlayer.incrementScore();
         gameMessages.win(currentPlayer.getSymbol());
-        gameMessages.printScores()
-        boardObj.clearBoard()
+        gameMessages.printScores();
+        boardObj.clearBoard();
         switchPlayer();
         return;
       }
@@ -133,8 +176,8 @@ const game = (function (player1, player2, boardObj) {
       if (boardObj.isFull()) {
         tiesScore++;
         gameMessages.tie();
-        gameMessages.printScores()
-        boardObj.clearBoard()
+        gameMessages.printScores();
+        boardObj.clearBoard();
         return;
       }
 
@@ -149,4 +192,4 @@ const game = (function (player1, player2, boardObj) {
   return {
     play,
   };
-})(players.X, players.O, board);
+};

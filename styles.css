@@ -12,4 +12,34 @@ body {
   min-height: 100%;
   background-color: black;
   color: white;
+  text-align: center;
+}
+
+#player-selector-modal{
+  border: 2px solid red;
+  width: max-content;
+  padding: 1rem;
+}
+
+#player-selector-modal button {
+  margin-top: .5rem;
+  cursor: pointer;
+  width: 3rem;
+  height: 2rem;
+}
+
+.hide {
+  display: none;
+  /* background-color: white; */
+}
+
+#board-container {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+}
+
+#board-container > div > button {
+  width: 100%;
+  height: 100%;
 }
