@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,39 @@
   <link rel="stylesheet" href="styles.css">
   <script src="./script.js" defer></script>
 </head>
+
 <body>
+  <div id="scores-section">
+    <section class="score-container">
+      <p>X</p>
+      <h2 id="x-score">0</h2>
+    </section>
+    <section class="score-container">
+      <p>Ties</p>
+      <h2 id="ties-score">0</h2>
+    </section>
+    <section class="score-container">
+      <p>O</p>
+      <h2 id="o-score">0</h2>
+    </section>
+  </div>
+
+  <h2 id="game-status-message">PRUEBA</h2>
+
+  <div id="board-container">
+    <button class="cell" data-index="0"></button>
+    <button class="cell" data-index="1"></button>
+    <button class="cell" data-index="2"></button>
+    <button class="cell" data-index="3"></button>
+    <button class="cell" data-index="4"></button>
+    <button class="cell" data-index="5"></button>
+    <button class="cell" data-index="6"></button>
+    <button class="cell" data-index="7"></button>
+    <button class="cell" data-index="8"></button>
+  </div>
+
+  <button id="reset-button">Reset</button>
+
   <div id="player-selector-modal" class="">
     <h1>Pick one</h1>
     <div id="symbol-buttons-container">
@@ -15,17 +48,6 @@
       <button class="symbol-button" id="o-button" type="button">O</button>
     </div>
   </div>
-
-  <div id="board-container">
-    <div><button class="cell">0</button></div>
-    <div><button class="cell">1</button></div>
-    <div><button class="cell">2</button></div>
-    <div><button class="cell">3</button></div>
-    <div><button class="cell">4</button></div>
-    <div><button class="cell">5</button></div>
-    <div><button class="cell">6</button></div>
-    <div><button class="cell">7</button></div>
-    <div><button class="cell">8</button></div>
-  </div>
 </body>
+
 </html>

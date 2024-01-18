@@ -43,3 +43,12 @@ body {
   width: 100%;
   height: 100%;
 }
+
+#scores-section {
+  display: flex;
+  gap: 3rem;
+}
+
+.cell {
+  font-size: 4rem;
+}
