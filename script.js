@@ -49,9 +49,8 @@ const board = (function () {
 })();
 
 const gameFactory = function (playerObj, boardObj) {
-  const { player1, player2 } = playerObj;
-  let currentPlayer = player1;
-  let tiesScore = document.getElementById("ties-score"); // this should be in ui
+  const { playerX, playerO } = playerObj;
+  let currentPlayer = playerX;
 
   const isValidMove = (i) => {
     return boardObj.cells[i] === "";
@@ -80,7 +79,7 @@ const gameFactory = function (playerObj, boardObj) {
   };
 
   const switchPlayer = () => {
-    currentPlayer = currentPlayer === player1 ? player2 : player1;
+    currentPlayer = currentPlayer === playerX ? playerO : playerX;
   };
 
   const play = (i) => {
@@ -91,24 +90,22 @@ const gameFactory = function (playerObj, boardObj) {
       if (isWinner()) {
         isGameOver = true;
         currentPlayer.incrementScore();
-        ui.gameStatus.changeMessage(
-          ui.gameStatus.messages.win(currentPlayer.getSymbol())
-        );
+        ui.scoreBoard.updateScores();
+        ui.gameStatus.changeMessage(ui.gameStatus.messages.win(currentPlayer.getSymbol()));
         switchPlayer();
         return;
       }
 
       if (boardObj.isFull()) {
-        tiesScore.textContent++; // tiesScore should be in ui
         ui.gameStatus.changeMessage(ui.gameStatus.messages.tie);
+        ui.incrementTiesScore()
+        ui.scoreBoard.updateScores();
         switchPlayer();
         return;
       }
 
       switchPlayer();
-      ui.gameStatus.changeMessage(
-        ui.gameStatus.messages.turn(currentPlayer.getSymbol())
-      );
+      ui.gameStatus.changeMessage(ui.gameStatus.messages.turn(currentPlayer.getSymbol()));
       return;
     }
 
@@ -126,19 +123,19 @@ const gameFactory = function (playerObj, boardObj) {
 const ui = (function () {
   const players = {};
   let currentGame = null;
-
+  let tiesScore = 0;
   const startModal = {
     symbolSelectorModal: document.getElementById("player-selector-modal"),
     symbolSelectorBtns: document.getElementById("symbol-buttons-container"),
 
-    assignPlayers: function (symbol, playersObj) {
-      playersObj.player1 = playerFactory(symbol);
-      playersObj.player2 = playerFactory(symbol === "X" ? "O" : "X");
+    assignPlayers: function (playersObj) {
+      playersObj.playerX = playerFactory("X");
+      playersObj.playerO = playerFactory("O");
     },
 
     symbolButtonClickHandler: (e) => {
       if (e.target && e.target.tagName === "BUTTON") {
-        startModal.assignPlayers(e.target.textContent, players);
+        startModal.assignPlayers(players);
         startModal.symbolSelectorModal.classList.toggle("hide");
         currentGame = gameFactory(players, board);
       }
@@ -192,12 +189,26 @@ const ui = (function () {
     },
   };
 
+  const scoreBoard = {
+    xScore: document.getElementById("x-score"),
+    oScore: document.getElementById("o-score"),
+    tiesScoreUI: document.getElementById("ties-score"),
+
+    updateScores: function(){
+      this.xScore.textContent = players.playerX.getScore();
+      this.oScore.textContent = players.playerO.getScore();
+      this.tiesScoreUI.textContent = tiesScore;
+    }
+  }
+
   reset.button.addEventListener("click", reset.resetButtonClickHandler);
   startModal.symbolSelectorBtns.addEventListener("click", startModal.symbolButtonClickHandler);
   boardController.boardContainer.addEventListener("click", boardController.boardClickHanlder);
-
+  
   return {
     gameStatus,
+    scoreBoard,
+    incrementTiesScore: () => ++tiesScore,
   };
 })();
 // TODO: HAZ QUE AL GANAR O EMPATAR, SE DESABILITE LA FUNCIONALIDAD PARA QUE TENGAN QUE DAR EN RESET, USA UN FLAG
