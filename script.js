@@ -53,13 +53,6 @@ const gameFactory = function (playerObj, boardObj) {
   let currentPlayer = player1;
   let tiesScore = document.getElementById("ties-score"); // this should be in ui
 
-  const gameMessages = {
-    win: (winner) => `Player ${winner} wins.`,
-    turn: (currentPlayer) => `${currentPlayer}'s turn`,
-    tie: `Tie.`,
-    selectAnotherCell: `Select another cell.`,
-  };
-
   const isValidMove = (i) => {
     return boardObj.cells[i] === "";
   };
@@ -81,8 +74,7 @@ const gameFactory = function (playerObj, boardObj) {
   let isGameOver = false;
   const makeMove = (i) => {
     if (isGameOver) {
-      board.clearBoard();
-      isGameOver = false;
+      return;
     }
     boardObj.cells[i] = currentPlayer.getSymbol();
   };
@@ -91,56 +83,49 @@ const gameFactory = function (playerObj, boardObj) {
     currentPlayer = currentPlayer === player1 ? player2 : player1;
   };
 
-  let currentMessage = gameMessages.turn(currentPlayer.getSymbol())
-
   const play = (i) => {
-    if (!currentPlayer.getSymbol()) {
-      return;
-    }
-
-    currentMessage = gameMessages.turn(currentPlayer.getSymbol());
-
     if (isValidMove(i)) {
       makeMove(i);
 
       if (isWinner()) {
         isGameOver = true;
         currentPlayer.incrementScore();
-        currentMessage = gameMessages.win(currentPlayer.getSymbol());
+        ui.gameStatus.changeMessage(
+          ui.gameStatus.messages.win(currentPlayer.getSymbol())
+        );
         switchPlayer();
-        return currentMessage;
+        return;
       }
 
       if (boardObj.isFull()) {
         tiesScore.textContent++; // tiesScore should be in ui
-        currentMessage = gameMessages.tie;
-        boardObj.clearBoard();
+        ui.gameStatus.changeMessage(ui.gameStatus.messages.tie);
         switchPlayer();
-        return currentMessage;
+        return;
       }
 
       switchPlayer();
-      return currentMessage;
+      ui.gameStatus.changeMessage(
+        ui.gameStatus.messages.turn(currentPlayer.getSymbol())
+      );
+      return;
     }
 
-    currentMessage = gameMessages.selectAnotherCell;
-    return currentMessage;
+    ui.gameStatus.changeMessage(ui.gameStatus.messages.selectAnotherCell);
+    return;
   };
-
-  const getCurrentMessage = () => currentMessage;
 
   return {
     play,
-    gameMessages,
     currentPlayer,
-    getCurrentMessage,
+    isGameOver,
   };
 };
 
 const ui = (function () {
   const players = {};
   const currentGame = null;
-  
+
   const startModal = {
     symbolSelectorModal: document.getElementById("player-selector-modal"),
     symbolSelectorBtns: document.getElementById("symbol-buttons-container"),
@@ -155,26 +140,32 @@ const ui = (function () {
         startModal.assignPlayers(e.target.textContent, ui.players);
         startModal.symbolSelectorModal.classList.toggle("hide");
         ui.currentGame = gameFactory(ui.players, board);
-        gameStatus.changeMessage(ui.currentGame.getCurrentMessage())
       }
     },
   };
-  
+
   const gameStatus = {
-    gameStatusMessage: document.getElementById("game-status-message"),
+    messageElement: document.getElementById("game-status-message"),
+
+    messages: {
+      win: (winner) => `Player ${winner} winso.`,
+      turn: (currentPlayer) => `${currentPlayer} turno.`,
+      tie: `Tieo.`,
+      selectAnotherCell: `Select another cello.`,
+    },
     changeMessage: function (message) {
-      this.gameStatusMessage.textContent = message;
+      this.messageElement.textContent = message;
     },
   };
-  
+
   const boardController = {
     boardContainer: document.getElementById("board-container"),
     boardCells: document.querySelectorAll(".cell"),
-    
+
     handleMove: function (cellIndex) {
       ui.currentGame.play(cellIndex);
     },
-    
+
     renderBoard: function () {
       const boardCellsArr = board.cells;
       this.boardCells.forEach(function (cell, index) {
@@ -183,23 +174,35 @@ const ui = (function () {
     },
 
     boardClickHanlder: (e) => {
-      if(e.target && e.target.tagName === "BUTTON"){
-        gameStatus.changeMessage(ui.currentGame.getCurrentMessage());
+      if (e.target && e.target.tagName === "BUTTON") {
         let cellIndex = e.target.getAttribute("data-index");
         boardController.handleMove(cellIndex);
-        boardController.renderBoard()
+        boardController.renderBoard();
       }
-    }
+    },
   };
-  
-  startModal.symbolSelectorBtns.addEventListener("click", startModal.symbolButtonClickHandler);
-  boardController.boardContainer.addEventListener("click", boardController.boardClickHanlder);
+
+  const resetButton = document.getElementById("reset-button");
+
+  resetButton.addEventListener("click", () => {
+    board.clearBoard();
+    boardController.renderBoard();
+  });
+
+  startModal.symbolSelectorBtns.addEventListener(
+    "click",
+    startModal.symbolButtonClickHandler
+  );
+  boardController.boardContainer.addEventListener(
+    "click",
+    boardController.boardClickHanlder
+  );
 
   return {
     startModal,
     players,
     currentGame,
-    gameStatus,
     boardController,
+    gameStatus,
   };
 })();
