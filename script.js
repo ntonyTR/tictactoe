@@ -84,6 +84,7 @@ const gameFactory = function (playerObj, boardObj) {
   };
 
   const play = (i) => {
+    if (isGameOver) return;
     if (isValidMove(i)) {
       makeMove(i);
 
@@ -124,7 +125,7 @@ const gameFactory = function (playerObj, boardObj) {
 
 const ui = (function () {
   const players = {};
-  const currentGame = null;
+  let currentGame = null;
 
   const startModal = {
     symbolSelectorModal: document.getElementById("player-selector-modal"),
@@ -137,9 +138,9 @@ const ui = (function () {
 
     symbolButtonClickHandler: (e) => {
       if (e.target && e.target.tagName === "BUTTON") {
-        startModal.assignPlayers(e.target.textContent, ui.players);
+        startModal.assignPlayers(e.target.textContent, players);
         startModal.symbolSelectorModal.classList.toggle("hide");
-        ui.currentGame = gameFactory(ui.players, board);
+        currentGame = gameFactory(players, board);
       }
     },
   };
@@ -148,10 +149,10 @@ const ui = (function () {
     messageElement: document.getElementById("game-status-message"),
 
     messages: {
-      win: (winner) => `Player ${winner} winso.`,
-      turn: (currentPlayer) => `${currentPlayer} turno.`,
-      tie: `Tieo.`,
-      selectAnotherCell: `Select another cello.`,
+      win: (winner) => `Player ${winner} wins.`,
+      turn: (currentPlayer) => `${currentPlayer} turn.`,
+      tie: `Tie.`,
+      selectAnotherCell: `Select another cell.`,
     },
     changeMessage: function (message) {
       this.messageElement.textContent = message;
@@ -163,7 +164,7 @@ const ui = (function () {
     boardCells: document.querySelectorAll(".cell"),
 
     handleMove: function (cellIndex) {
-      ui.currentGame.play(cellIndex);
+      currentGame.play(cellIndex);
     },
 
     renderBoard: function () {
@@ -182,27 +183,24 @@ const ui = (function () {
     },
   };
 
-  const resetButton = document.getElementById("reset-button");
+  const reset = {
+    button: document.getElementById("reset-button"),
 
-  resetButton.addEventListener("click", () => {
-    board.clearBoard();
-    boardController.renderBoard();
-  });
+    resetButtonClickHandler: () => {
+      board.clearBoard();
+      boardController.renderBoard();
+    },
+  };
 
-  startModal.symbolSelectorBtns.addEventListener(
-    "click",
-    startModal.symbolButtonClickHandler
-  );
-  boardController.boardContainer.addEventListener(
-    "click",
-    boardController.boardClickHanlder
-  );
+  reset.button.addEventListener("click", reset.resetButtonClickHandler);
+  startModal.symbolSelectorBtns.addEventListener("click", startModal.symbolButtonClickHandler);
+  boardController.boardContainer.addEventListener("click", boardController.boardClickHanlder);
 
   return {
-    startModal,
-    players,
-    currentGame,
-    boardController,
     gameStatus,
   };
 })();
+// TODO: HAZ QUE AL GANAR O EMPATAR, SE DESABILITE LA FUNCIONALIDAD PARA QUE TENGAN QUE DAR EN RESET, USA UN FLAG
+// DESPUES DE HACER RESET, MUESTRA EL CURRENTPLAYER INICIAL
+// BUG: AL RESETEAR DESPUES DE UN WIN, NO SE PINTA NADA
+// YA HICE QUE LOS MENSAJES ESTEN EN UI, AHORA BUSCA UNA FORMA DE HACER LAS LLAMADAS A LOS MENSJAES MAS CORTAS
