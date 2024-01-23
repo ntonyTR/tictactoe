@@ -37,11 +37,8 @@ const board = (function () {
     });
   };
 
-  const getBoard = () => board;
-
   return {
     cells,
-    getBoard,
     winCombinations,
     isFull,
     clearBoard,
@@ -51,6 +48,7 @@ const board = (function () {
 const gameFactory = function (playerObj, boardObj) {
   const { playerX, playerO } = playerObj;
   let currentPlayer = playerX;
+  let isGameOver = false;
 
   const isValidMove = (i) => {
     return boardObj.cells[i] === "";
@@ -70,11 +68,12 @@ const gameFactory = function (playerObj, boardObj) {
     return false;
   };
 
-  let isGameOver = false;
+  const reset = function() {
+    ui.gameStatus.updateMessage(ui.gameStatus.messages.turn(currentPlayer.getSymbol()));
+    return isGameOver = false
+  }
+  
   const makeMove = (i) => {
-    if (isGameOver) {
-      return;
-    }
     boardObj.cells[i] = currentPlayer.getSymbol();
   };
 
@@ -91,13 +90,13 @@ const gameFactory = function (playerObj, boardObj) {
         isGameOver = true;
         currentPlayer.incrementScore();
         ui.scoreBoard.updateScores();
-        ui.gameStatus.changeMessage(ui.gameStatus.messages.win(currentPlayer.getSymbol()));
+        ui.gameStatus.updateMessage(ui.gameStatus.messages.win(currentPlayer.getSymbol()));
         switchPlayer();
         return;
       }
 
       if (boardObj.isFull()) {
-        ui.gameStatus.changeMessage(ui.gameStatus.messages.tie);
+        ui.gameStatus.updateMessage(ui.gameStatus.messages.tie);
         ui.incrementTiesScore()
         ui.scoreBoard.updateScores();
         switchPlayer();
@@ -105,18 +104,17 @@ const gameFactory = function (playerObj, boardObj) {
       }
 
       switchPlayer();
-      ui.gameStatus.changeMessage(ui.gameStatus.messages.turn(currentPlayer.getSymbol()));
+      ui.gameStatus.updateMessage(ui.gameStatus.messages.turn(currentPlayer.getSymbol()));
       return;
     }
 
-    ui.gameStatus.changeMessage(ui.gameStatus.messages.selectAnotherCell);
+    ui.gameStatus.updateMessage(ui.gameStatus.messages.selectAnotherCell);
     return;
   };
 
   return {
     play,
-    currentPlayer,
-    isGameOver,
+    reset,
   };
 };
 
@@ -138,6 +136,7 @@ const ui = (function () {
         startModal.assignPlayers(players);
         startModal.symbolSelectorModal.classList.toggle("hide");
         currentGame = gameFactory(players, board);
+        gameStatus.updateMessage(gameStatus.messages.turn(players.playerX.getSymbol()))
       }
     },
   };
@@ -151,7 +150,7 @@ const ui = (function () {
       tie: `Tie.`,
       selectAnotherCell: `Select another cell.`,
     },
-    changeMessage: function (message) {
+    updateMessage: function (message) {
       this.messageElement.textContent = message;
     },
   };
@@ -159,10 +158,6 @@ const ui = (function () {
   const boardController = {
     boardContainer: document.getElementById("board-container"),
     boardCells: document.querySelectorAll(".cell"),
-
-    handleMove: function (cellIndex) {
-      currentGame.play(cellIndex);
-    },
 
     renderBoard: function () {
       const boardCellsArr = board.cells;
@@ -172,9 +167,9 @@ const ui = (function () {
     },
 
     boardClickHanlder: (e) => {
-      if (e.target && e.target.tagName === "BUTTON") {
+      if (e.target && e.target.tagName === "BUTTON" && currentGame) {
         let cellIndex = e.target.getAttribute("data-index");
-        boardController.handleMove(cellIndex);
+        currentGame.play(cellIndex)
         boardController.renderBoard();
       }
     },
@@ -186,6 +181,7 @@ const ui = (function () {
     resetButtonClickHandler: () => {
       board.clearBoard();
       boardController.renderBoard();
+      currentGame.reset();
     },
   };
 
@@ -211,7 +207,3 @@ const ui = (function () {
     incrementTiesScore: () => ++tiesScore,
   };
 })();
-// TODO: HAZ QUE AL GANAR O EMPATAR, SE DESABILITE LA FUNCIONALIDAD PARA QUE TENGAN QUE DAR EN RESET, USA UN FLAG
-// DESPUES DE HACER RESET, MUESTRA EL CURRENTPLAYER INICIAL
-// BUG: AL RESETEAR DESPUES DE UN WIN, NO SE PINTA NADA
-// YA HICE QUE LOS MENSAJES ESTEN EN UI, AHORA BUSCA UNA FORMA DE HACER LAS LLAMADAS A LOS MENSJAES MAS CORTAS
