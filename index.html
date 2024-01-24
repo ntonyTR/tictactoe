@@ -10,45 +10,53 @@
 </head>
 
 <body>
-  <div id="scores-section">
-    <div class="score-container">
-      <p>X</p>
-      <h2 id="x-score">0</h2>
+  <header>
+    <h1>Tic Tac Toe</h1>
+    <h3>by <a href="https://github.com/ntonyTR">Antony TR</a></h3>
+  </header>
+
+  <main id="main-content" class="hide">
+    
+    <h2 id="game-status-message"></h2>
+    
+    <div id="board-container">
+      <button class="cell" data-index="0"></button>
+      <button class="cell" data-index="1"></button>
+      <button class="cell" data-index="2"></button>
+      <button class="cell" data-index="3"></button>
+      <button class="cell" data-index="4"></button>
+      <button class="cell" data-index="5"></button>
+      <button class="cell" data-index="6"></button>
+      <button class="cell" data-index="7"></button>
+      <button class="cell" data-index="8"></button>
     </div>
-    <div class="score-container">
-      <p>Ties</p>
-      <h2 id="ties-score">0</h2>
+    
+    <div id="scores-section">
+      <div class="score-container">
+        <p id="x-score">0</p>
+        <h3>X</h3>
+      </div>
+      <div class="score-container">
+        <p id="ties-score">0</p>
+        <h3>Ties</h3>
+      </div>
+      <div class="score-container">
+        <p id="o-score">0</p>
+        <h3>O</h3>
+      </div>
     </div>
-    <div class="score-container">
-      <p>O</p>
-      <h2 id="o-score">0</h2>
-    </div>
-  </div>
 
-  <h2 id="game-status-message"></h2>
-
-  <div id="board-container">
-    <button class="cell" data-index="0"></button>
-    <button class="cell" data-index="1"></button>
-    <button class="cell" data-index="2"></button>
-    <button class="cell" data-index="3"></button>
-    <button class="cell" data-index="4"></button>
-    <button class="cell" data-index="5"></button>
-    <button class="cell" data-index="6"></button>
-    <button class="cell" data-index="7"></button>
-    <button class="cell" data-index="8"></button>
-  </div>
-
-  <button id="reset-button">Reset</button>
-
-  <div id="player-selector-modal" class="">
-    <h1>Pick one</h1>
-    <p>(X is first)</p>
+    <button id="reset-button">Reset</button>
+  </main>
+  
+  <section id="player-selector-modal">
+    <h3>Pick one</h3>
+    <p>(X goes first)</p>
     <div id="symbol-buttons-container">
       <button class="symbol-abutton" id="x-button" type="button">X</button>
       <button class="symbol-button" id="o-button" type="button">O</button>
     </div>
-  </div>
+  </section>
 </body>
 
 </html>

@@ -1,3 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa&display=swap');
+
+:root {
+  --dark: #1E1B18;
+  --dark-blue: #4A5899;
+  --dark-red: #aa0707;
+  --light-blue: #C7EBF0;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -10,46 +20,125 @@ html {
 
 body {
   min-height: 100%;
-  background-color: black;
-  color: white;
+  font-family: 'Comfortaa', sans-serif;
+  background-color: var(--dark);
+  color: var(--light-blue);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* header */
+header {
   text-align: center;
+  font-family: 'Varela Round', sans-serif;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
-#player-selector-modal{
-  border: 2px solid red;
-  width: max-content;
-  padding: 1rem;
+header > h3 {
+  font-size: 0.8em;
+  font-weight: lighter;
 }
 
-#player-selector-modal button {
-  margin-top: .5rem;
-  cursor: pointer;
-  width: 3rem;
-  height: 2rem;
+h3 > a {
+  text-decoration: none;
+  color: var(--dark-blue);
 }
 
 .hide {
   display: none;
-  /* background-color: white; */
 }
 
+/* status-message */
+#game-status-message {
+  text-align: center;
+  height: 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+/* board */
 #board-container {
   display: grid;
-  grid-template-columns: repeat(3, 100px);
-  grid-template-rows: repeat(3, 100px);
+  grid-template-columns: repeat(3, 6rem);
+  grid-template-rows: repeat(3, 6rem);
   gap: 1rem;
-}
-
-#board-container > div > button {
-  width: 100%;
-  height: 100%;
-}
-
-#scores-section {
-  display: flex;
-  gap: 3rem;
+  margin-bottom: 1rem;
 }
 
 .cell {
-  font-size: 4rem;
+  font-family: 'Varela Round', sans-serif;
+  background-color: var(--dark-blue);
+  color: var(--light-blue);
+  font-size: 5rem;
+  border: none;
+  border-radius: 10px;
+  box-shadow: inset 0 0 1rem rgba(0, 0, 0, .8);
+}
+
+/* scores */
+#scores-section {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.score-container{
+  text-align: center;
+  background-color: var(--light-blue);
+  color: var(--dark);
+  padding: 0.2rem 2rem;
+  border-radius: 10px;
+}
+
+.score-container > h3 {
+  font-weight: bolder;
+}
+
+.score-container > p {
+  font-weight: lighter;
+}
+
+/* reset-button */
+#reset-button {
+  font-family: 'Comfortaa', sans-serif;
+  background-color: var(--dark-red);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bolder;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* modal */
+#player-selector-modal{
+  background-color: var(--light-blue);
+  color: var(--dark);
+  box-shadow: 0px 0px 20px rgba(199, 235, 240, 0.33);
+  padding: 1rem 2rem;
+  text-align: center;
+  border-radius: 20px;
+}
+
+#player-selector-modal > h3 {
+  font-size: 2rem;
+  font-weight: bolder;
+}
+
+#player-selector-modal button {
+  font-family: 'Varela Round', sans-serif;
+  background-color: var(--dark-blue);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bolder;
+  margin-top: 1rem;
+  width: 80px;
+  height: 2em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }

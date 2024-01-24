@@ -122,6 +122,7 @@ const ui = (function () {
   const players = {};
   let currentGame = null;
   let tiesScore = 0;
+  const mainContent = document.getElementById("main-content");
   const startModal = {
     symbolSelectorModal: document.getElementById("player-selector-modal"),
     symbolSelectorBtns: document.getElementById("symbol-buttons-container"),
@@ -135,6 +136,7 @@ const ui = (function () {
       if (e.target && e.target.tagName === "BUTTON") {
         startModal.assignPlayers(players);
         startModal.symbolSelectorModal.classList.toggle("hide");
+        mainContent.classList.toggle("hide");
         currentGame = gameFactory(players, board);
         gameStatus.updateMessage(gameStatus.messages.turn(players.playerX.getSymbol()))
       }
